@@ -1,9 +1,12 @@
 package il.ac.tau.cs.software1.bigram;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
 
 public class BigramModel {
+
     public static final int MAX_VOCABULARY_SIZE = 14500;
     public static final String VOC_FILE_SUFFIX = ".voc";
     public static final String COUNTS_FILE_SUFFIX = ".counts";
@@ -79,8 +82,38 @@ public class BigramModel {
      * @post: mBigramCounts = prev(mBigramCounts)
      */
     public String[] buildVocabularyIndex(String fileName) throws IOException { // Question 1
-        // TODO: implement
-        return null;
+        int counter = 0;
+        String[] vocabulary = new String[MAX_VOCABULARY_SIZE];
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while (counter < MAX_VOCABULARY_SIZE && (line = reader.readLine()) != null) {
+                String[] tokens = line.trim().split("\\s+");
+                for (int i = 0; i < tokens.length && counter < MAX_VOCABULARY_SIZE; i++) {
+                    String token = tokens[i];
+                    final String normalizedToken = normalizeWord(token);
+                    if (normalizedToken != null && !isInArray(normalizedToken, vocabulary, counter)) {
+                        vocabulary[counter] = normalizedToken;
+                        counter++;
+                    }
+                }
+            }
+        }
+
+        String[] resultVocabulary = new String[counter];
+        System.arraycopy(vocabulary, 0, resultVocabulary, 0, counter);
+
+        return resultVocabulary;
+    }
+
+    private boolean isInArray(String s, String[] array, int arraySize) {
+        for (int i = 0; i < arraySize; i++) {
+            if (array[i].equals(s)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /*
