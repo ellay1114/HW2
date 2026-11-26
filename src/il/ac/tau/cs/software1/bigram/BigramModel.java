@@ -94,7 +94,7 @@ public class BigramModel {
                 for (int i = 0; i < tokens.length && counter < MAX_VOCABULARY_SIZE; i++) {
                     String token = tokens[i];
                     final String normalizedToken = normalizeWord(token);
-                    if (normalizedToken != null && !isInArray(normalizedToken, vocabulary, counter)) {
+                    if (normalizedToken != null && findIndex(vocabulary, normalizedToken) == ELEMENT_NOT_FOUND) {
                         vocabulary[counter] = normalizedToken;
                         counter++;
                     }
@@ -108,20 +108,10 @@ public class BigramModel {
         return resultVocabulary;
     }
 
-    private boolean isInArray(String s, String[] array, int arraySize) {
-        for (int i = 0; i < arraySize; i++) {
-            if (array[i].equals(s)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private int getIndexFromToken(String token, String[] vocabulary) {
         final String word = normalizeWord(token);
         if (word == null) {
-            return -1;
+            return ELEMENT_NOT_FOUND;
         }
 
         return findIndex(vocabulary, word);
@@ -142,7 +132,7 @@ public class BigramModel {
                 for (int i = 0; i < tokens.length - 1; i++) {
                     int currIndex = getIndexFromToken(tokens[i], vocabulary);
                     int nextIndex = getIndexFromToken(tokens[i + 1], vocabulary);
-                    if (currIndex != -1 && nextIndex != -1) {
+                    if (currIndex != ELEMENT_NOT_FOUND && nextIndex != ELEMENT_NOT_FOUND) {
                         countArray[currIndex][nextIndex]++;
                     }
                 }
