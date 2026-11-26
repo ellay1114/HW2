@@ -116,13 +116,38 @@ public class BigramModel {
         return false;
     }
 
+    private int getIndexFromToken(String token, String[] vocabulary) {
+        final String word = normalizeWord(token);
+        if (word == null) {
+            return -1;
+        }
+
+        return findIndex(vocabulary, word);
+    }
+
     /*
      * @post: mVocabulary = prev(mVocabulary)
      * @post: mBigramCounts = prev(mBigramCounts)
      */
     public int[][] buildCountsArray(String fileName, String[] vocabulary) throws IOException { // Question 2
-        // TODO: implement
-        return null;
+        // Initialized with 0s
+        int[][] countArray = new int[vocabulary.length][vocabulary.length];
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] tokens = line.trim().split("\\s+");
+                for (int i = 0; i < tokens.length - 1; i++) {
+                    int currIndex = getIndexFromToken(tokens[i], vocabulary);
+                    int nextIndex = getIndexFromToken(tokens[i + 1], vocabulary);
+                    if (currIndex != -1 && nextIndex != -1) {
+                        countArray[currIndex][nextIndex]++;
+                    }
+                }
+            }
+        }
+
+        return countArray;
     }
 
     /*
