@@ -1,7 +1,9 @@
 package il.ac.tau.cs.software1.bigram;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -150,12 +152,38 @@ public class BigramModel {
         return countArray;
     }
 
+    private void saveVocabularyWord(BufferedWriter writer, int index, String word) throws IOException {
+        writer.write(String.format("%d,%s%n", index, word));
+    }
+
+    private void saveArrayCount(BufferedWriter writer, int firstWordIndex, int secondWordIndex, int counts) throws IOException {
+        writer.write(String.format("%d,%d:%d%n", firstWordIndex, secondWordIndex, counts));
+    }
+
     /*
      * @pre: the method initModel was called (the language model is initialized)
      * @pre: fileName is a legal file path
      */
     public void saveModel(String fileName) throws IOException { // Question 3
-        // TODO: implement
+        // Save vocabulary
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + VOC_FILE_SUFFIX))) {
+            writer.write(String.format("%d words%n", mVocabulary.length));
+
+            for (int i = 0; i < mVocabulary.length; i++) {
+                saveVocabularyWord(writer, i, mVocabulary[i]);
+            }
+        }
+
+        // Save counts
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + COUNTS_FILE_SUFFIX))) {
+            for (int i = 0; i < mVocabulary.length; i++) {
+                for (int j = 0; j < mVocabulary.length; j++) {
+                    if (mBigramCounts[i][j] > 0) {
+                        saveArrayCount(writer, i, j, mBigramCounts[i][j]);
+                    }
+                }
+            }
+        }
     }
 
     /*
