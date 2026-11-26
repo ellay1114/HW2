@@ -209,9 +209,6 @@ public class BigramModel {
      */
     public boolean isLegalSentence(String sentence) { // Question 5
         String[] tokens = sentence.trim().split("\\s+");
-        if (tokens.length == 0) {
-            return true;
-        }
         if (tokens.length == 1) {
             return tokens[0].isEmpty() || getWordIndex(tokens[0]) != ELEMENT_NOT_FOUND;
         }
