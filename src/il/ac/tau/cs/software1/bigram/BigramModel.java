@@ -152,14 +152,6 @@ public class BigramModel {
         return countArray;
     }
 
-    private void saveVocabularyWord(BufferedWriter writer, int index, String word) throws IOException {
-        writer.write(String.format("%d,%s%n", index, word));
-    }
-
-    private void saveArrayCount(BufferedWriter writer, int firstWordIndex, int secondWordIndex, int counts) throws IOException {
-        writer.write(String.format("%d,%d:%d%n", firstWordIndex, secondWordIndex, counts));
-    }
-
     /*
      * @pre: the method initModel was called (the language model is initialized)
      * @pre: fileName is a legal file path
@@ -170,7 +162,7 @@ public class BigramModel {
             writer.write(String.format("%d words%n", mVocabulary.length));
 
             for (int i = 0; i < mVocabulary.length; i++) {
-                saveVocabularyWord(writer, i, mVocabulary[i]);
+                writer.write(String.format("%d,%s%n", i, mVocabulary[i]));
             }
         }
 
@@ -179,7 +171,7 @@ public class BigramModel {
             for (int i = 0; i < mVocabulary.length; i++) {
                 for (int j = 0; j < mVocabulary.length; j++) {
                     if (mBigramCounts[i][j] > 0) {
-                        saveArrayCount(writer, i, j, mBigramCounts[i][j]);
+                        writer.write(String.format("%d,%d:%d%n", i, j, mBigramCounts[i][j]));
                     }
                 }
             }
@@ -190,7 +182,33 @@ public class BigramModel {
      * @pre: fileName is a legal file path
      */
     public void loadModel(String fileName) throws IOException { // Question 4
-        // TODO: implement
+        int length;
+        String[] loadedVocabulary;
+        int[][] loadedCounts;
+
+        // Load vocabulary
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName + VOC_FILE_SUFFIX))) {
+            length = Integer.parseInt(reader.readLine().trim().split("\\s+")[0]);
+            loadedVocabulary = new String[length];
+
+            for (int i = 0; i < length; i++) {
+                String[] parts = reader.readLine().split(",", 2);
+                loadedVocabulary[Integer.parseInt(parts[0])] = parts[1];
+            }
+        }
+
+        // Load counts
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName + COUNTS_FILE_SUFFIX))) {
+            loadedCounts = new int[length][length];
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("[,:]", 3);
+                loadedCounts[Integer.parseInt(parts[0])][Integer.parseInt(parts[1])] = Integer.parseInt(parts[2]);
+            }
+        }
+
+        mVocabulary = loadedVocabulary;
+        mBigramCounts = loadedCounts;
     }
 
     /*
