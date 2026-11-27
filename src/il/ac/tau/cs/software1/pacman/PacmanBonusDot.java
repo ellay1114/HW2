@@ -4,23 +4,23 @@ import il.ac.tau.cs.software1.components.*;
 
 public class PacmanBonusDot extends PacmanBonus {
 
-	public PacmanBonusDot(PacmanGridComponent initialPosition) {
-		super(initialPosition);
-		this.imageComponent = new ImageComponent("bonus-dot");
-		this.bonusScore = 10;
-	}
+    private static final float WEIGHT = 1.0f;
+    private static final float PRICE = 12.0f;
 
-	// The two methods below belong to the Collectible interface (Question 8)
+    public PacmanBonusDot(PacmanGridComponent initialPosition) {
+        super(initialPosition);
+        this.imageComponent = new ImageComponent("bonus-dot");
+        this.bonusScore = 10;
+    }
 
-	@Override
-	public float getWeight() {
-		// TODO: implement
-		return 0.f;
-	}
+    // The two methods below belong to the Collectible interface (Question 8)
+    @Override
+    public float getWeight() {
+        return WEIGHT;
+    }
 
-	@Override
-	public float getPrice() {
-		// TODO: implement
-		return 0.f;
-	}
+    @Override
+    public float getPrice() {
+        return PRICE;
+    }
 }

@@ -5,36 +5,48 @@ package il.ac.tau.cs.software1.inventory;
  */
 public class NaiveInventory implements Inventory {
 
-	private static final int INITIAL_CAPACITY = 100;
+    private static final int INITIAL_CAPACITY = 100;
+    private Collectible[] storedItems;
+    private int storedCounter;
 
-	// TODO: add the fields:
-	//       - an array of Collectibles (it may be larger than the number of items actually stored)
-	//       - an int that counts how many items are actually stored
+    public NaiveInventory() {
+        // An array of Collectibles
+        storedCounter = 0;
+        // An int that counts how many items are actually stored
+        storedItems = new Collectible[INITIAL_CAPACITY];
+    }
 
-	public NaiveInventory() {
-		// TODO: implement
-	}
+    @Override
+    public void collect(Collectible collectible) {
+        if (storedCounter >= storedItems.length) {
+            // Enlarge the stored items array
+            Collectible[] newArray = new Collectible[2 * storedItems.length];
+            System.arraycopy(storedItems, 0, newArray, 0, storedCounter);
+            storedItems = newArray;
+        }
 
-	@Override
-	public void collect(Collectible collectible) {
-		// TODO: implement
-	}
+        storedItems[storedCounter] = collectible;
+        storedCounter++;
+    }
 
-	@Override
-	public float getTotalWeight() {
-		// TODO: implement
-		return 0.f;
-	}
+    @Override
+    public float getTotalWeight() {
+		float weight = 0.f;
 
-	@Override
-	public int getCurrentCount() {
-		// TODO: implement
-		return 0;
-	}
+		for (int i = 0; i < storedCounter; i++) {
+			weight += storedItems[i].getWeight();
+		}
 
-	// Returns the array of Collectibles that is stored in the field of this class
-	public Collectible[] getCollArr() {
-		// TODO: implement
-		return null;
-	}
+		return weight;
+    }
+
+    @Override
+    public int getCurrentCount() {
+        return storedCounter;
+    }
+
+    // Returns the array of Collectibles that is stored in the field of this class
+    public Collectible[] getCollArr() {
+        return storedItems;
+    }
 }
